@@ -1374,34 +1374,22 @@ class CuraApplication(QtApplication):
     @pyqtSlot()
     def openBrowserWindow(self):
         # Create main app
-        print("hello world")
+        # print("hello world")
         # myApp = QApplication(sys.argv)
         # web = QtWebEngineWidgets.QWebEnginePage()
         # Create a label and set its properties
         engine = QQmlApplicationEngine(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml")))
+        engine.rootContext().setContextProperty('CuraApplication', self)
         # utils = Utils();
         # engine.rootContext().setContextProperty("utils", utils)
-        #  componet = QQmlComponent(engine)
-        #  componet.loadUrl(QUrl.fromLocalFile('ApplicationRoot.qml'))
         #  engine.load(QUrl.fromLocalFile('BrowserWindow.qml'))
         # engine.load(QUrl.fromLocalFile(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml"))))
-        print('gate0')
         window = engine.rootObjects()[0]
         #  window.show()
-        print('gate1')
         window.load("http://www.myminifactory.com")
         window.show()
-        print('gate2')
-        # Execute the Application and Exit
-        # sys.exit(return_code)
-        # app = QObject()
-        # appEngine = QQmlApplicationEngine(QUrl("qrc:../ressources/qml/BrowserWindow.qml"))
-        # win = appEngine.rootObjects()[0]
-        # QMetaObject.invokeMethod(win, "load", Q_ARG(QVariant, self.startupUrl()))
-        # self.append(appEngine)
-        # #win = QtWidgets()
-        # win.show()
-        #app.exec_()
-        #Utils utils;
-        #appEngine.rootContext()->setContextProperty("utils", &utils);
-        #appEngine.load(QUrl("qrc:../ressources/qml/ApplicationRoot.qml"));
+
+    # @pyqtSlot(str)
+    def importToCura(self, filename):
+        print('hi: '+filename)
+        self.readLocalFile(QUrl.fromLocalFile(filename))

@@ -73,6 +73,5 @@ QtObject {
     function load(url) {
         var browserWindow = createWindow(defaultProfile)
         browserWindow.currentWebView.url = url
-        browserWindow.show()
     }
 }
