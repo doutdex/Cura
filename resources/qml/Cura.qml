@@ -10,6 +10,7 @@ import QtQuick.Dialogs 1.1
 import UM 1.3 as UM
 import Cura 1.0 as Cura
 
+import "web"
 import "Menus"
 
 UM.MainWindow
@@ -316,7 +317,8 @@ UM.MainWindow
                     top: openFileButton.bottom;
                     left: parent.left;
                 }
-                onClicked: Qt.openUrlExternally("https://www.myminifactory.com");
+                onClicked: CuraApplication.openBrowserWindow();// Qt.openUrlExternally("https://www.myminifactory.com");
+
             }
 
             Image

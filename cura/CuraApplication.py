@@ -3,6 +3,12 @@
 from PyQt5.QtNetwork import QLocalServer
 from PyQt5.QtNetwork import QLocalSocket
 
+# Added by us
+from PyQt5.QtCore import QUrl, QObject, pyqtProperty, pyqtSlot
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtQml import QQmlApplicationEngine, QQmlEngine, QQmlComponent
+from PyQt5 import QtWebEngineWidgets
+
 from UM.Qt.QtApplication import QtApplication
 from UM.Scene.SceneNode import SceneNode
 from UM.Scene.Camera import Camera
@@ -1361,3 +1367,41 @@ class CuraApplication(QtApplication):
                     node = node.getParent()
 
                 Selection.add(node)
+
+    def startupUrl():
+        return QUrl(QStringLiteral("http://www.myminifactory.com"));
+
+    @pyqtSlot()
+    def openBrowserWindow(self):
+        # Create main app
+        print("hello world")
+        # myApp = QApplication(sys.argv)
+        # web = QtWebEngineWidgets.QWebEnginePage()
+        # Create a label and set its properties
+        engine = QQmlApplicationEngine(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml")))
+        # utils = Utils();
+        # engine.rootContext().setContextProperty("utils", utils)
+        #  componet = QQmlComponent(engine)
+        #  componet.loadUrl(QUrl.fromLocalFile('ApplicationRoot.qml'))
+        #  engine.load(QUrl.fromLocalFile('BrowserWindow.qml'))
+        # engine.load(QUrl.fromLocalFile(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml"))))
+        print('gate0')
+        window = engine.rootObjects()[0]
+        #  window.show()
+        print('gate1')
+        window.load("http://www.myminifactory.com")
+        window.show()
+        print('gate2')
+        # Execute the Application and Exit
+        # sys.exit(return_code)
+        # app = QObject()
+        # appEngine = QQmlApplicationEngine(QUrl("qrc:../ressources/qml/BrowserWindow.qml"))
+        # win = appEngine.rootObjects()[0]
+        # QMetaObject.invokeMethod(win, "load", Q_ARG(QVariant, self.startupUrl()))
+        # self.append(appEngine)
+        # #win = QtWidgets()
+        # win.show()
+        #app.exec_()
+        #Utils utils;
+        #appEngine.rootContext()->setContextProperty("utils", &utils);
+        #appEngine.load(QUrl("qrc:../ressources/qml/ApplicationRoot.qml"));
