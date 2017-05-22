@@ -57,9 +57,6 @@ Rectangle {
         downloadModel.append(download)
         downloadModel.downloads.push(download)
     }
-    function printdownload(download) {
-        console.log(download)
-    }
 
     Component {
         id: downloadItemDelegate
@@ -135,7 +132,6 @@ Rectangle {
         delegate: downloadItemDelegate
 
         Text {
-            id: textid
             visible: !listView.count
             horizontalAlignment: Text.AlignHCenter
             height: 30

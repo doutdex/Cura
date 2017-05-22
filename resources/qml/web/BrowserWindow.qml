@@ -86,8 +86,8 @@ ApplicationWindow {
         id: focus
         shortcut: "Ctrl+L"
         onTriggered: {
-            addressBar.forceActiveFocus();
-            addressBar.selectAll();
+            // addressBar.forceActiveFocus();
+            // addressBar.selectAll();
         }
     }
     Action {
@@ -102,8 +102,8 @@ ApplicationWindow {
         onTriggered: {
             tabs.createEmptyTab(currentWebView.profile)
             tabs.currentIndex = tabs.count - 1
-            addressBar.forceActiveFocus();
-            addressBar.selectAll();
+            // addressBar.forceActiveFocus();
+            // addressBar.selectAll();
         }
     }
     Action {
@@ -217,7 +217,7 @@ ApplicationWindow {
                     onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
                     activeFocusOnTab: !browserWindow.platformIsMac
                 }
-                TextField {
+                /* TextField {
                     id: addressBar
                     Image {
                         anchors.verticalCenter: addressBar.verticalCenter;
@@ -236,7 +236,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     text: currentWebView && currentWebView.url
                     onAccepted: currentWebView.url = utils.fromUserInput(text)
-                }
+                }*/
                 ToolButton {
                     id: settingsMenuButton
                     menu: Menu {
@@ -476,10 +476,8 @@ ApplicationWindow {
 
     function onDownloadRequested(download) {
         downloadView.visible = true
-        //downloadView.append(download)
-        downloadView.printdownload(download)
-        console.log(download.path)
-        //download.accept()
+        downloadView.append(download)
+        download.accept()
     }
 
     Rectangle {
