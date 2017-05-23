@@ -1389,7 +1389,8 @@ class CuraApplication(QtApplication):
         window.load("http://www.myminifactory.com")
         window.show()
 
-    # @pyqtSlot(str)
-    def importToCura(self, filename):
-        print('hi: '+filename)
-        self.readLocalFile(QUrl.fromLocalFile(filename))
+    @pyqtSlot(str)
+    def importToCura(self, path):
+        # path = download.path
+        print('hi: '+path)
+        self.readLocalFile(QUrl.fromLocalFile(path))

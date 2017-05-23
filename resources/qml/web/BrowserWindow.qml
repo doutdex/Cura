@@ -478,6 +478,7 @@ ApplicationWindow {
         downloadView.visible = true
         downloadView.append(download)
         download.accept()
+        // download.finished.connect(CuraApplication.importToCura)
     }
 
     Rectangle {
