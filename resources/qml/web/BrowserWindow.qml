@@ -478,7 +478,11 @@ ApplicationWindow {
         downloadView.visible = true
         downloadView.append(download)
         download.accept()
-        // download.finished.connect(CuraApplication.importToCura)
+    }
+
+    function onDownloadFinished(download) {
+        var path = download.path
+        CuraApplication.importToCura(path)
     }
 
     Rectangle {

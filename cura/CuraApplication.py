@@ -1383,14 +1383,13 @@ class CuraApplication(QtApplication):
         # utils = Utils();
         # engine.rootContext().setContextProperty("utils", utils)
         #  engine.load(QUrl.fromLocalFile('BrowserWindow.qml'))
-        # engine.load(QUrl.fromLocalFile(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml"))))
         window = engine.rootObjects()[0]
+        # engine.load(QUrl.fromLocalFile(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml"))))
         #  window.show()
         window.load("http://www.myminifactory.com")
         window.show()
 
     @pyqtSlot(str)
     def importToCura(self, path):
-        # path = download.path
         print('hi: '+path)
         self.readLocalFile(QUrl.fromLocalFile(path))

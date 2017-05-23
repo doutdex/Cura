@@ -104,7 +104,6 @@ Rectangle {
                     iconSource: "icons/process-stop.png"
                     onClicked: {
                         var download = downloadModel.downloads[index]
-                        CuraApplication.importToCura(download.path)
                         download.cancel()
 
                         downloadModel.downloads = downloadModel.downloads.filter(function (el) {
