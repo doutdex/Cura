@@ -698,6 +698,8 @@ class CuraApplication(QtApplication):
     #   \param engine The QML engine.
     def registerObjects(self, engine):
         super().registerObjects(engine)
+        engine.load(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml")))
+        self.browser = engine.rootObjects()[0]
         engine.rootContext().setContextProperty("Printer", self)
         engine.rootContext().setContextProperty("CuraApplication", self)
         self._print_information = PrintInformation.PrintInformation()
@@ -1374,25 +1376,10 @@ class CuraApplication(QtApplication):
 
     @pyqtSlot()
     def openBrowserWindow(self):
-        # Create main app
-        # print("hello world")
-        # myApp = QApplication(sys.argv)
-        # web = QtWebEngineWidgets.QWebEnginePage()
-        # Create a label and set its properties
-        engine = QQmlApplicationEngine(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml")))
-        engine.rootContext().setContextProperty('CuraApplication', self)
-        # utils = Utils();
-        # engine.rootContext().setContextProperty("utils", utils)
-        #  engine.load(QUrl.fromLocalFile('BrowserWindow.qml'))
-        window = engine.rootObjects()[0]
-        # engine.load(QUrl.fromLocalFile(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml"))))
-        #  window.show()
-        window.load("http://www.myminifactory.com")
-        window.show()
+        self.browser.load("http://www.myminifactory.com")
 
     @pyqtSlot(str)
     def importToCura(self, path):
-        print('hi: '+path)
         if path.lower().endswith('.zip'):
             dirname = os.path.dirname(path)
             tmpDirname = os.path.join(dirname, 'curatmp')
@@ -1401,7 +1388,6 @@ class CuraApplication(QtApplication):
             import zipfile
             zip = zipfile.ZipFile(path,'r')
             for i in zip.namelist():
-                print('extracting file', i, tmpDirname)
                 zip.extractall(path=tmpDirname, members=[i])
                 fullFileName = os.path.join(tmpDirname, i)
                 self.readLocalFile(QUrl.fromLocalFile(fullFileName))
