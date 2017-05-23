@@ -1337,6 +1337,7 @@ class CuraApplication(QtApplication):
             op = AddSceneNodeOperation(node, scene.getRoot())
             op.push()
             scene.sceneChanged.emit(node)
+            os.remove(filename)
 
     def addNonSliceableExtension(self, extension):
         self._non_sliceable_extensions.append(extension)
@@ -1392,4 +1393,18 @@ class CuraApplication(QtApplication):
     @pyqtSlot(str)
     def importToCura(self, path):
         print('hi: '+path)
-        self.readLocalFile(QUrl.fromLocalFile(path))
+        if path.lower().endswith('.zip'):
+            dirname = os.path.dirname(path)
+            tmpDirname = os.path.join(dirname, 'curatmp')
+            if not os.path.exists(tmpDirname):
+                os.makedirs(tmpDirname)
+            import zipfile
+            zip = zipfile.ZipFile(path,'r')
+            for i in zip.namelist():
+                print('extracting file', i, tmpDirname)
+                zip.extractall(path=tmpDirname, members=[i])
+                fullFileName = os.path.join(tmpDirname, i)
+                self.readLocalFile(QUrl.fromLocalFile(fullFileName))
+                #  os.remove(fullFileName)
+        else:
+            self.readLocalFile(QUrl.fromLocalFile(path))
