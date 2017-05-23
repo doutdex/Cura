@@ -353,6 +353,8 @@ class CuraApplication(QtApplication):
         self.globalContainerStackChanged.connect(self._onGlobalContainerChanged)
         self._onGlobalContainerChanged()
 
+        self._mmftmpdir = 'mmftmpdir'
+
     def _onEngineCreated(self):
         self._engine.addImageProvider("camera", CameraImageProvider.CameraImageProvider())
 
@@ -1249,45 +1251,62 @@ class CuraApplication(QtApplication):
 
     @pyqtSlot(QUrl)
     def readLocalFile(self, file):
-        if not file.isValid():
-            return
+        if not isinstance(file, str):
+            path = file.toLocalFile()
+        else:
+            path = file
+        if path.lower().endswith('.zip'):
+            dirname = os.path.dirname(path)
+            tmpDirname = os.path.join(dirname, self._mmftmpdir)
+            if not os.path.exists(tmpDirname):
+                os.makedirs(tmpDirname)
+            import zipfile
+            zip = zipfile.ZipFile(path,'r')
+            for i in zip.namelist():
+                zip.extractall(path=tmpDirname, members=[i])
+                fullFileName = os.path.join(tmpDirname, i)
+                self.readLocalFile(QUrl.fromLocalFile(fullFileName))
+        else:
 
-        scene = self.getController().getScene()
+            if not file.isValid():
+                return
 
-        for node in DepthFirstIterator(scene.getRoot()):
-            if node.callDecoration("isBlockSlicing"):
+            scene = self.getController().getScene()
+
+            for node in DepthFirstIterator(scene.getRoot()):
+                if node.callDecoration("isBlockSlicing"):
+                    self.deleteAll()
+                    break
+
+            f = file.toLocalFile()
+            extension = os.path.splitext(f)[1]
+            filename = os.path.basename(f)
+            if len(self._currently_loading_files) > 0:
+                # If a non-slicable file is already being loaded, we prevent loading of any further non-slicable files
+                if extension.lower() in self._non_sliceable_extensions:
+                    message = Message(
+                        self._i18n_catalog.i18nc("@info:status",
+                                           "Only one G-code file can be loaded at a time. Skipped importing {0}",
+                                           filename))
+                    message.show()
+                    return
+                # If file being loaded is non-slicable file, then prevent loading of any other files
+                extension = os.path.splitext(self._currently_loading_files[0])[1]
+                if extension.lower() in self._non_sliceable_extensions:
+                    message = Message(
+                        self._i18n_catalog.i18nc("@info:status",
+                                           "Can't open any other file if G-code is loading. Skipped importing {0}",
+                                           filename))
+                    message.show()
+                    return
+
+            self._currently_loading_files.append(f)
+            if extension in self._non_sliceable_extensions:
                 self.deleteAll()
-                break
 
-        f = file.toLocalFile()
-        extension = os.path.splitext(f)[1]
-        filename = os.path.basename(f)
-        if len(self._currently_loading_files) > 0:
-            # If a non-slicable file is already being loaded, we prevent loading of any further non-slicable files
-            if extension.lower() in self._non_sliceable_extensions:
-                message = Message(
-                    self._i18n_catalog.i18nc("@info:status",
-                                       "Only one G-code file can be loaded at a time. Skipped importing {0}",
-                                       filename))
-                message.show()
-                return
-            # If file being loaded is non-slicable file, then prevent loading of any other files
-            extension = os.path.splitext(self._currently_loading_files[0])[1]
-            if extension.lower() in self._non_sliceable_extensions:
-                message = Message(
-                    self._i18n_catalog.i18nc("@info:status",
-                                       "Can't open any other file if G-code is loading. Skipped importing {0}",
-                                       filename))
-                message.show()
-                return
-
-        self._currently_loading_files.append(f)
-        if extension in self._non_sliceable_extensions:
-            self.deleteAll()
-
-        job = ReadMeshJob(f)
-        job.finished.connect(self._readMeshFinished)
-        job.start()
+            job = ReadMeshJob(f)
+            job.finished.connect(self._readMeshFinished)
+            job.start()
 
     def _readMeshFinished(self, job):
         nodes = job.getResult()
@@ -1339,7 +1358,11 @@ class CuraApplication(QtApplication):
             op = AddSceneNodeOperation(node, scene.getRoot())
             op.push()
             scene.sceneChanged.emit(node)
-            os.remove(filename)
+            if self._mmftmpdir in filename:
+                os.remove(filename)
+                dirname = os.path.dirname(filename)
+                if os.listdir(dirname) == []:
+                    os.rmdir(dirname)
 
     def addNonSliceableExtension(self, extension):
         self._non_sliceable_extensions.append(extension)
@@ -1380,17 +1403,4 @@ class CuraApplication(QtApplication):
 
     @pyqtSlot(str)
     def importToCura(self, path):
-        if path.lower().endswith('.zip'):
-            dirname = os.path.dirname(path)
-            tmpDirname = os.path.join(dirname, 'curatmp')
-            if not os.path.exists(tmpDirname):
-                os.makedirs(tmpDirname)
-            import zipfile
-            zip = zipfile.ZipFile(path,'r')
-            for i in zip.namelist():
-                zip.extractall(path=tmpDirname, members=[i])
-                fullFileName = os.path.join(tmpDirname, i)
-                self.readLocalFile(QUrl.fromLocalFile(fullFileName))
-                #  os.remove(fullFileName)
-        else:
-            self.readLocalFile(QUrl.fromLocalFile(path))
+        self.readLocalFile(QUrl.fromLocalFile(path))
