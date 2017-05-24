@@ -54,8 +54,6 @@ ApplicationWindow {
     property Item currentWebView: tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
     property int previousVisibility: Window.Windowed
 
-    width: 1300
-    height: 900
     visible: true
     title: currentWebView && currentWebView.title
 

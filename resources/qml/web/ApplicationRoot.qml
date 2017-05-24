@@ -71,8 +71,13 @@ QtObject {
         newDialog.currentWebView.profile = profile
         return newDialog
     }
-    function load(url) {
-        var browserWindow = createWindow(defaultProfile)
-        browserWindow.currentWebView.url = url
+    function load(url, x, y, width, height) {
+
+        var newWindow = browserWindowComponent.createObject(root, {"x":x, "y":y, "width":width, "height":height})
+        newWindow.currentWebView.profile = defaultProfile
+        defaultProfile.downloadRequested.connect(newWindow.onDownloadRequested)
+        defaultProfile.downloadFinished.connect(newWindow.onDownloadFinished)
+        newWindow.currentWebView.url = url
+        return newWindow
     }
 }

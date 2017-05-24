@@ -317,8 +317,18 @@ UM.MainWindow
                     top: openFileButton.bottom;
                     left: parent.left;
                 }
-                onClicked: CuraApplication.openBrowserWindow();// Qt.openUrlExternally("https://www.myminifactory.com");
+                onClicked: {
+                    //CuraApplication.openBrowserWindow();// Qt.openUrlExternally("https://www.myminifactory.com");
 
+                    var comp = Qt.createComponent("web/ApplicationRoot.qml")
+                    var newWin = comp.createObject()
+                    var height = sidebar.height
+                    var width =  sidebar.width
+                    var globalPos = sidebar.mapToGlobal(0, 0)
+                    var x = globalPos.x
+                    var y = globalPos.y
+                    newWin.load("https://www.myminifactory.com", x, y, width, height)
+                }
             }
 
             Image
