@@ -341,7 +341,7 @@ UM.MainWindow
                         top: toolBar.bottom
                     }
                     width: parent.width
-                    url: "https://www.myminifactory.com/object/the-surprise-egg-36253"
+                    url: "https://startt.myminifactory.com/"
                 }
 
                 DownloadView {
@@ -356,8 +356,6 @@ UM.MainWindow
                 }
 
                 Component.onCompleted: {
-                    CuraApplication.log("--------------------")
-                    CuraApplication.log(browserView)
                     browserView.profile = defaultProfile
                     defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
                     defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
@@ -431,20 +429,6 @@ UM.MainWindow
                 }
                 onClicked: {
                     browser.toggleBrowser()
-                    //if (!CuraApplication.isBrowserOpen()) {
-
-                        //var comp = Qt.createComponent("web/ApplicationRoot.qml")
-                        //var appRootObj = comp.createObject()
-                        //var height = sidebar.height
-                        //var width =  sidebar.width
-                        //var globalPos = sidebar.mapToGlobal(0, 0)
-                        //var x = globalPos.x
-                        //var y = globalPos.y
-                        //var newWin = appRootObj.load("https://www.myminifactory.com", x, y, width, height)
-                        //appRootObj.openBrowserWindow(newWin);// Qt.openUrlExternally("https://www.myminifactory.com");
-                    //} else {
-                        //CuraApplication.raiseBrowserWindow()
-                    //}
                 }
             }
 

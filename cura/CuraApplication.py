@@ -124,7 +124,6 @@ class CuraApplication(QtApplication):
     Q_ENUMS(ResourceTypes)
 
     def __init__(self):
-        self.isBrowserOpen = False
         # this list of dir names will be used by UM to detect an old cura directory
         for dir_name in ["extruders", "machine_instances", "materials", "plugins", "quality", "user", "variants"]:
             Resources.addExpectedDirNameInData(dir_name)
@@ -701,9 +700,6 @@ class CuraApplication(QtApplication):
     #   \param engine The QML engine.
     def registerObjects(self, engine):
         super().registerObjects(engine)
-        self.engine = engine
-        engine.load(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "web/ApplicationRoot.qml")))
-        # self.browser = engine.rootObjects()[0]
         engine.rootContext().setContextProperty("Printer", self)
         engine.rootContext().setContextProperty("CuraApplication", self)
         self._print_information = PrintInformation.PrintInformation()
@@ -1395,31 +1391,6 @@ class CuraApplication(QtApplication):
                     node = node.getParent()
 
                 Selection.add(node)
-
-    def startupUrl():
-        return QUrl(QStringLiteral("http://www.myminifactory.com"));
-
-    @pyqtSlot(result=bool)
-    def isBrowserOpen(self):
-        print('---- isopen window')
-        return self.isBrowserOpen
-
-    @pyqtSlot()
-    def raiseBrowserWindow(self):
-        print('---- raising browser window')
-        self.browser.raise_()
-
-    @pyqtSlot()
-    def closeBrowserWindow(self):
-        print('---- closeing browser window')
-        self.isBrowserOpen = False
-
-    @pyqtSlot(QObject)
-    def openBrowserWindow(self, obj):
-        print("----- open new window")
-        self.isBrowserOpen = True
-        self.browser = obj
-        # self.browser.load("http://www.myminifactory.com")
 
     @pyqtSlot(str)
     def importToCura(self, path):
