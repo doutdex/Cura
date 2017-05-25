@@ -54,7 +54,7 @@ UM.MainWindow
             id: toolBar
             height: 30
             width: parent.width
-            color: '#25B9A1'
+            color: 'white'
             anchors
             {
                 top: parent.top
@@ -62,37 +62,97 @@ UM.MainWindow
             }
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 30
+                spacing: 0
                 Button {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            radius: 0
+                            height: parent.width
+                        }
+                        label: Image {
+                            source: UM.Theme.getIcon("go-previous")
+                            fillMode: Image.PreserveAspectFit
+
+                        }
+                    }
                     id: backButton
-                    iconSource: "icons/go-previous.png"
                     onClicked: browserView.goBack()
                     enabled: browserView && browserView.canGoBack
                     activeFocusOnTab: !browserView.platformIsMac
                 }
                 Button {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            radius: 0
+                            height: parent.width
+                        }
+                        label: Image {
+                            source: UM.Theme.getIcon("go-next")
+                            fillMode: Image.PreserveAspectFit
+
+                        }
+                    }
                     id: forwardButton
-                    iconSource: "icons/go-next.png"
                     onClicked: browserView.goForward()
                     enabled: browserView && browserView.canGoForward
                     activeFocusOnTab: !browserView.platformIsMac
                 }
                 Button {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            radius: 0
+                            height: parent.width
+                        }
+                        label: Image {
+                            source: UM.Theme.getIcon("view-refresh")
+                            fillMode: Image.PreserveAspectFit
+
+                        }
+                    }
                     id: reloadButton
-                    iconSource: browserView && "icons/view-refresh.png"
                     onClicked: browserView && browserView.reload()
                     activeFocusOnTab: !browserView.platformIsMac
                 }
                 Button {
-                    id: closeBrowserButton
-                    iconSource: "icons/process-stop.png"
-                    onClicked: browser.toggleBrowser()
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            radius: 0
+                            height: parent.width
+                        }
+                        label: Image {
+                            source: UM.Theme.getIcon("home")
+                            fillMode: Image.PreserveAspectFit
+
+                        }
+                    }
+                    id: homeButton
+                    onClicked: browser.home()
                     activeFocusOnTab: !browserView.platformIsMac
                 }
                 Button {
-                    id: homeButton
-                    iconSource: "icons/home.png"
-                    onClicked: browser.home()
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            radius: 0
+                            height: parent.width
+                        }
+                        label: Image {
+                            source: UM.Theme.getIcon("process-stop")
+                            fillMode: Image.PreserveAspectFit
+
+                        }
+                    }
+                    id: closeBrowserButton
+                    onClicked: browser.toggleBrowser()
                     activeFocusOnTab: !browserView.platformIsMac
                 }
             }
@@ -467,14 +527,14 @@ UM.MainWindow
                 anchors
                 {
                     left: parent.left
-                    // leftMargin: UM.Theme.getSize("default_margin").width;
+                    leftMargin: UM.Theme.getSize("default_margin").width;
                     bottom: parent.bottom
-                    // bottomMargin: UM.Theme.getSize("default_margin").height;
+                    bottomMargin: UM.Theme.getSize("default_margin").height;
                 }
 
-                source: UM.Theme.getImage("starttLogo");
-                width: UM.Theme.getSize("starttLogo").width;
-                height: UM.Theme.getSize("starttLogo").height;
+                source: UM.Theme.getImage("logo");
+                width: UM.Theme.getSize("logo").width;
+                height: UM.Theme.getSize("logo").height;
                 z: -1;
 
                 sourceSize.width: width;
