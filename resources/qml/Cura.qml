@@ -467,14 +467,14 @@ UM.MainWindow
                 anchors
                 {
                     left: parent.left
-                    leftMargin: UM.Theme.getSize("default_margin").width;
+                    // leftMargin: UM.Theme.getSize("default_margin").width;
                     bottom: parent.bottom
-                    bottomMargin: UM.Theme.getSize("default_margin").height;
+                    // bottomMargin: UM.Theme.getSize("default_margin").height;
                 }
 
-                source: UM.Theme.getImage("logo");
-                width: UM.Theme.getSize("logo").width;
-                height: UM.Theme.getSize("logo").height;
+                source: UM.Theme.getImage("starttLogo");
+                width: UM.Theme.getSize("starttLogo").width;
+                height: UM.Theme.getSize("starttLogo").height;
                 z: -1;
 
                 sourceSize.width: width;
