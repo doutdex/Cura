@@ -257,14 +257,14 @@ UM.MainWindow
 
             Rectangle {
                 id: browser
-                anchors
-                {
+                anchors.fill : parent
+                /*{
                     top: parent.top
                     bottom: parent.bottom
                     right: parent.right
-                }
+                }*/
                 z: 2
-                width: UM.Theme.getSize("sidebar").width
+                // width: UM.Theme.getSize("sidebar").width
                 height: 30
                 visible: false
 
