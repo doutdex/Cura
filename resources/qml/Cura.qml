@@ -342,14 +342,18 @@ UM.MainWindow
                     }
                     width: parent.width
                     url: "https://www.myminifactory.com/object/the-surprise-egg-36253"
-
-                    DownloadView {
-                        id: downloadView
-                        visible: false
-                        anchors.fill: parent
-                    }
                 }
 
+                DownloadView {
+                    id: downloadView
+                    visible: false
+                    anchors {
+                        bottom: parent.bottom
+                        right: parent.right
+                        top: toolBar.bottom
+                    }
+                    width: parent.width
+                }
 
                 Component.onCompleted: {
                     CuraApplication.log("--------------------")
