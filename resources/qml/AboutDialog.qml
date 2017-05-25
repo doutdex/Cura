@@ -23,7 +23,7 @@ UM.Dialog
     {
         id: logo
         width: base.minimumWidth * 0.85
-        height: width * (1/4.25)
+        height: width * (1/3.5)
 
         source: UM.Theme.getImage("starttLogo")
 
