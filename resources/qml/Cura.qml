@@ -6,6 +6,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
+import QtWebEngine 1.2
 
 import UM 1.3 as UM
 import Cura 1.0 as Cura
@@ -254,6 +255,112 @@ UM.MainWindow
 
             Keys.forwardTo: menu
 
+            Rectangle {
+                id: browser
+                anchors
+                {
+                    top: parent.top
+                    bottom: parent.bottom
+                    right: parent.right
+                }
+                z: 2
+                width: UM.Theme.getSize("sidebar").width
+                height: 30
+                visible: false
+
+                Rectangle {
+                    id: toolBar
+                    height: 30
+                    width: parent.width
+                    color: '#25B9A1'
+                    anchors
+                    {
+                        top: parent.top
+                        right: parent.right
+                    }
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 30
+                        Button {
+                            id: backButton
+                            iconSource: "icons/go-previous.png"
+                            onClicked: browserView.goBack()
+                            enabled: browserView && browserView.canGoBack
+                            activeFocusOnTab: !browserView.platformIsMac
+                        }
+                        Button {
+                            id: forwardButton
+                            iconSource: "icons/go-next.png"
+                            onClicked: browserView.goForward()
+                            enabled: browserView && browserView.canGoForward
+                            activeFocusOnTab: !browserView.platformIsMac
+                        }
+                        Button {
+                            id: reloadButton
+                            iconSource: browserView && "icons/view-refresh.png"
+                            onClicked: browserView && browserView.reload()
+                            activeFocusOnTab: !browserView.platformIsMac
+                        }
+                        Button {
+                            id: closeBrowserButton
+                            iconSource: "icons/process-stop.png"
+                            onClicked: browser.toggleBrowser()
+                            activeFocusOnTab: !browserView.platformIsMac
+                        }
+                    }
+                }
+
+                function toggleBrowser() {
+                    browser.visible = !browser.visible
+                    sidebar.visible = !browser.visible
+                }
+
+                function onDownloadRequested(download) {
+                    downloadView.visible = true
+                    downloadView.append(download)
+                    download.accept()
+                }
+
+                function onDownloadFinished(download) {
+                    CuraApplication.log('-------------')
+                    var path = download.path
+                    CuraApplication.log(path)
+                    CuraApplication.importToCura(path)
+                }
+
+                WebEngineProfile {
+                    id: defaultProfile
+                    storageName: "Default"
+                }
+
+                WebEngineView {
+                    id: browserView
+                    anchors {
+                        bottom: parent.bottom
+                        right: parent.right
+                        top: toolBar.bottom
+                    }
+                    width: parent.width
+                    url: "https://www.myminifactory.com/object/the-surprise-egg-36253"
+
+                    DownloadView {
+                        id: downloadView
+                        visible: false
+                        anchors.fill: parent
+                    }
+                }
+
+
+                Component.onCompleted: {
+                    CuraApplication.log("--------------------")
+                    CuraApplication.log(browserView)
+                    browserView.profile = defaultProfile
+                    defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
+                    defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
+
+                }
+
+            }
             DropArea
             {
                 anchors.fill: parent;
@@ -305,6 +412,7 @@ UM.MainWindow
                 action: Cura.Actions.open;
             }
 
+
             Button
             {
                 id: openMMFButton;
@@ -318,16 +426,21 @@ UM.MainWindow
                     left: parent.left;
                 }
                 onClicked: {
-                    //CuraApplication.openBrowserWindow();// Qt.openUrlExternally("https://www.myminifactory.com");
+                    browser.toggleBrowser()
+                    //if (!CuraApplication.isBrowserOpen()) {
 
-                    var comp = Qt.createComponent("web/ApplicationRoot.qml")
-                    var newWin = comp.createObject()
-                    var height = sidebar.height
-                    var width =  sidebar.width
-                    var globalPos = sidebar.mapToGlobal(0, 0)
-                    var x = globalPos.x
-                    var y = globalPos.y
-                    newWin.load("https://www.myminifactory.com", x, y, width, height)
+                        //var comp = Qt.createComponent("web/ApplicationRoot.qml")
+                        //var appRootObj = comp.createObject()
+                        //var height = sidebar.height
+                        //var width =  sidebar.width
+                        //var globalPos = sidebar.mapToGlobal(0, 0)
+                        //var x = globalPos.x
+                        //var y = globalPos.y
+                        //var newWin = appRootObj.load("https://www.myminifactory.com", x, y, width, height)
+                        //appRootObj.openBrowserWindow(newWin);// Qt.openUrlExternally("https://www.myminifactory.com");
+                    //} else {
+                        //CuraApplication.raiseBrowserWindow()
+                    //}
                 }
             }
 
@@ -918,4 +1031,5 @@ UM.MainWindow
             }
         }
     }
+
 }

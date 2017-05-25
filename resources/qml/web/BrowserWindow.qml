@@ -414,10 +414,13 @@ ApplicationWindow {
                 }
 
                 onWindowCloseRequested: {
-                    if (tabs.count == 1)
+                    if (tabs.count == 1) {
                         browserWindow.close()
-                    else
+                        CuraApplication.closeBrowserWindow()
+                    }
+                    else {
                         tabs.removeTab(tabs.currentIndex)
+                    }
                 }
 
                 Timer {

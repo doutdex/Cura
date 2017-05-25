@@ -54,7 +54,10 @@ QtObject {
 
     property Component browserWindowComponent: BrowserWindow {
         applicationRoot: root
-        onClosing: destroy()
+        onClosing: {
+            destroy()
+            CuraApplication.closeBrowserWindow()
+        }
     }
     property Component browserDialogComponent: BrowserDialog {
         onClosing: destroy()
@@ -64,6 +67,7 @@ QtObject {
         newWindow.currentWebView.profile = profile
         profile.downloadRequested.connect(newWindow.onDownloadRequested)
         profile.downloadFinished.connect(newWindow.onDownloadFinished)
+        CuraApplication.log('----', newWindow)
         return newWindow
     }
     function createDialog(profile) {
@@ -78,6 +82,7 @@ QtObject {
         defaultProfile.downloadRequested.connect(newWindow.onDownloadRequested)
         defaultProfile.downloadFinished.connect(newWindow.onDownloadFinished)
         newWindow.currentWebView.url = url
+        CuraApplication.log('is this possible?')
         return newWindow
     }
 }
