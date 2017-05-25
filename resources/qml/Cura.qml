@@ -37,6 +37,143 @@ UM.MainWindow
         Cura.Actions.parent = backgroundItem
     }
 
+    Rectangle {
+        id: browser
+        anchors.fill : parent
+        /*{
+            top: parent.top
+            bottom: parent.bottom
+            right: parent.right
+        }*/
+        z: 2
+        // width: UM.Theme.getSize("sidebar").width
+        height: 30
+        visible: false
+
+        Rectangle {
+            id: toolBar
+            height: 30
+            width: parent.width
+            color: '#25B9A1'
+            anchors
+            {
+                top: parent.top
+                right: parent.right
+            }
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 30
+                Button {
+                    id: backButton
+                    iconSource: "icons/go-previous.png"
+                    onClicked: browserView.goBack()
+                    enabled: browserView && browserView.canGoBack
+                    activeFocusOnTab: !browserView.platformIsMac
+                }
+                Button {
+                    id: forwardButton
+                    iconSource: "icons/go-next.png"
+                    onClicked: browserView.goForward()
+                    enabled: browserView && browserView.canGoForward
+                    activeFocusOnTab: !browserView.platformIsMac
+                }
+                Button {
+                    id: reloadButton
+                    iconSource: browserView && "icons/view-refresh.png"
+                    onClicked: browserView && browserView.reload()
+                    activeFocusOnTab: !browserView.platformIsMac
+                }
+                Button {
+                    id: closeBrowserButton
+                    iconSource: "icons/process-stop.png"
+                    onClicked: browser.toggleBrowser()
+                    activeFocusOnTab: !browserView.platformIsMac
+                }
+                Button {
+                    id: homeButton
+                    iconSource: "icons/home.png"
+                    onClicked: browser.home()
+                    activeFocusOnTab: !browserView.platformIsMac
+                }
+            }
+        }
+
+        function home() {
+            browserView.url = "http://startt.myminifactory.com"
+        }
+
+        function toggleBrowser() {
+            browser.visible = !browser.visible
+            backgroundItem.visible = !browser.visible
+        }
+
+        function onDownloadRequested(download) {
+            downloadView.visible = true
+            downloadView.append(download)
+            download.accept()
+        }
+
+        function onDownloadFinished(download) {
+            browser.toggleBrowser()
+            downloadView.visible = false
+            var path = download.path
+            CuraApplication.importToCura(path)
+        }
+
+        WebEngineProfile {
+            id: defaultProfile
+            storageName: "Default"
+        }
+
+        WebEngineView {
+            id: browserView
+            anchors {
+                bottom: parent.bottom
+                right: parent.right
+                top: toolBar.bottom
+            }
+            width: parent.width
+            url: "http://startt.myminifactory.com/"
+
+            onNewViewRequested: {
+                if (!request.userInitiated) {
+                    CuraApplication.log("Warning: Blocked a popup window.")
+                } else {
+                    request.openIn(browserView)
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (mouseButtonClicked === Qt.RightButton) {
+                        // disable right click
+                        return false
+                    }
+                }
+            }
+        }
+
+        DownloadView {
+            id: downloadView
+            visible: false
+            anchors {
+                bottom: parent.bottom
+                right: parent.right
+                top: toolBar.bottom
+            }
+            width: parent.width
+        }
+
+        Component.onCompleted: {
+            browserView.profile = defaultProfile
+            defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
+            defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
+
+        }
+
+    }
+
     Item
     {
         id: backgroundItem;
@@ -255,114 +392,6 @@ UM.MainWindow
 
             Keys.forwardTo: menu
 
-            Rectangle {
-                id: browser
-                anchors.fill : parent
-                /*{
-                    top: parent.top
-                    bottom: parent.bottom
-                    right: parent.right
-                }*/
-                z: 2
-                // width: UM.Theme.getSize("sidebar").width
-                height: 30
-                visible: false
-
-                Rectangle {
-                    id: toolBar
-                    height: 30
-                    width: parent.width
-                    color: '#25B9A1'
-                    anchors
-                    {
-                        top: parent.top
-                        right: parent.right
-                    }
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: 30
-                        Button {
-                            id: backButton
-                            iconSource: "icons/go-previous.png"
-                            onClicked: browserView.goBack()
-                            enabled: browserView && browserView.canGoBack
-                            activeFocusOnTab: !browserView.platformIsMac
-                        }
-                        Button {
-                            id: forwardButton
-                            iconSource: "icons/go-next.png"
-                            onClicked: browserView.goForward()
-                            enabled: browserView && browserView.canGoForward
-                            activeFocusOnTab: !browserView.platformIsMac
-                        }
-                        Button {
-                            id: reloadButton
-                            iconSource: browserView && "icons/view-refresh.png"
-                            onClicked: browserView && browserView.reload()
-                            activeFocusOnTab: !browserView.platformIsMac
-                        }
-                        Button {
-                            id: closeBrowserButton
-                            iconSource: "icons/process-stop.png"
-                            onClicked: browser.toggleBrowser()
-                            activeFocusOnTab: !browserView.platformIsMac
-                        }
-                    }
-                }
-
-                function toggleBrowser() {
-                    browser.visible = !browser.visible
-                    sidebar.visible = !browser.visible
-                }
-
-                function onDownloadRequested(download) {
-                    downloadView.visible = true
-                    downloadView.append(download)
-                    download.accept()
-                }
-
-                function onDownloadFinished(download) {
-                    CuraApplication.log('-------------')
-                    var path = download.path
-                    CuraApplication.log(path)
-                    CuraApplication.importToCura(path)
-                }
-
-                WebEngineProfile {
-                    id: defaultProfile
-                    storageName: "Default"
-                }
-
-                WebEngineView {
-                    id: browserView
-                    anchors {
-                        bottom: parent.bottom
-                        right: parent.right
-                        top: toolBar.bottom
-                    }
-                    width: parent.width
-                    url: "https://startt.myminifactory.com/"
-                }
-
-                DownloadView {
-                    id: downloadView
-                    visible: false
-                    anchors {
-                        bottom: parent.bottom
-                        right: parent.right
-                        top: toolBar.bottom
-                    }
-                    width: parent.width
-                }
-
-                Component.onCompleted: {
-                    browserView.profile = defaultProfile
-                    defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
-                    defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
-
-                }
-
-            }
             DropArea
             {
                 anchors.fill: parent;
