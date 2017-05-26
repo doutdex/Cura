@@ -158,8 +158,11 @@ UM.MainWindow
             }
         }
 
+        function getHomeUrl() {
+            return "http://startt.myminifactory.com"
+        }
         function home() {
-            browserView.url = "http://startt.myminifactory.com"
+            browserView.url = browser.getHomeUrl()
         }
 
         function toggleBrowser() {
@@ -193,7 +196,7 @@ UM.MainWindow
                 top: toolBar.bottom
             }
             width: parent.width
-            url: "http://startt.myminifactory.com/"
+            url: browser.getHomeUrl()
 
             onNewViewRequested: {
                 if (!request.userInitiated) {
