@@ -186,6 +186,7 @@ UM.MainWindow
         WebEngineProfile {
             id: defaultProfile
             storageName: "Default"
+            httpUserAgent: httpUserAgent+" Software:cura_mmf"
         }
 
         WebEngineView {
@@ -197,7 +198,6 @@ UM.MainWindow
             }
             width: parent.width
             url: browser.getHomeUrl()
-
             onNewViewRequested: {
                 if (!request.userInitiated) {
                     CuraApplication.log("Warning: Blocked a popup window.")
