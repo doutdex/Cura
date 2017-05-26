@@ -530,14 +530,14 @@ UM.MainWindow
                 anchors
                 {
                     left: parent.left
-                    //leftMargin: UM.Theme.getSize("default_margin").width;
                     bottom: parent.bottom
-                    //bottomMargin: UM.Theme.getSize("default_margin").height;
+                    // leftMargin: UM.Theme.getSize("default_margin").width;
+                    // bottomMargin: UM.Theme.getSize("default_margin").height;
                 }
 
                 source: UM.Theme.getImage("starttLogo");
-                width: 250; //UM.Theme.getSize("starttLogo").width;
-                height: 80; //UM.Theme.getSize("starttLogo").height;
+                width: UM.Theme.getSize("starttLogo").width;
+                height: UM.Theme.getSize("starttLogo").height;
 
                 z: -1;
 
