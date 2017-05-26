@@ -535,9 +535,10 @@ UM.MainWindow
                     bottomMargin: UM.Theme.getSize("default_margin").height;
                 }
 
-                source: UM.Theme.getImage("logo");
-                width: UM.Theme.getSize("logo").width;
-                height: UM.Theme.getSize("logo").height;
+                source: UM.Theme.getImage("starttLogo");
+                width: 200; //UM.Theme.getSize("starttLogo").width;
+                height: 70; //UM.Theme.getSize("starttLogo").height;
+
                 z: -1;
 
                 sourceSize.width: width;
