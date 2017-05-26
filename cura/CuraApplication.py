@@ -8,6 +8,7 @@ from PyQt5.QtCore import QUrl, QObject, pyqtProperty, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlEngine, QQmlComponent
 from PyQt5 import QtWebEngineWidgets
+from PyQt5.QtCore import Qt
 
 from UM.Qt.QtApplication import QtApplication
 from UM.Scene.SceneNode import SceneNode
@@ -240,8 +241,8 @@ class CuraApplication(QtApplication):
         Resources.addType(self.ResourceTypes.QmlFiles, "qml")
         Resources.addType(self.ResourceTypes.Firmware, "firmware")
 
-        self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Loading machines..."))
-
+        if self._splash:
+            self._splash.showMessage(self._i18n_catalog.i18nc("@info:progress", "Loading machines...") , Qt.AlignHCenter | Qt.AlignBottom)
         # Add empty variant, material and quality containers.
         # Since they are empty, they should never be serialized and instead just programmatically created.
         # We need them to simplify the switching between materials.
