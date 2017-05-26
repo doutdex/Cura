@@ -599,7 +599,9 @@ class CuraApplication(QtApplication):
         return True
 
     def run(self):
-        self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Setting up scene..."))
+        # self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Setting up scene..."))
+        if self._splash:
+            self._splash.showMessage(self._i18n_catalog.i18nc("@info:progress", "Setting up scene...") , Qt.AlignHCenter | Qt.AlignBottom)
 
         self._setUpSingleInstanceServer()
 
@@ -641,7 +643,9 @@ class CuraApplication(QtApplication):
         self._camera_animation = CameraAnimation.CameraAnimation()
         self._camera_animation.setCameraTool(self.getController().getTool("CameraTool"))
 
-        self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Loading interface..."))
+        # self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Loading interface..."))
+        if self._splash:
+            self._splash.showMessage(self._i18n_catalog.i18nc("@info:progress", "Loading interface...") , Qt.AlignHCenter | Qt.AlignBottom)
 
         # Initialise extruder so as to listen to global container stack changes before the first global container stack is set.
         ExtruderManager.getInstance()
