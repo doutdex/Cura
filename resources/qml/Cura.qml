@@ -160,6 +160,7 @@ UM.MainWindow
 
         function getHomeUrl() {
             return "http://startt.myminifactory.com"
+            // return "http://www.google.com"
         }
         function home() {
             browserView.url = browser.getHomeUrl()
@@ -170,24 +171,38 @@ UM.MainWindow
             backgroundItem.visible = !browser.visible
         }
 
+        function canBeImported(path){
+            var re = /(?:\.([^.]+))?$/
+            var extension = re.exec(path)[1]
+            if( extension !== undefined){
+                extension = extension.toLowerCase()
+                if( (extension.localeCompare('stl') === 0)
+                    || (extension.localeCompare('zip')  === 0)
+                        || (extension.localeCompare('obj') === 0)){
+                    return true
+                }
+            }
+            return false
+        }
+
         function onDownloadRequested(download) {
             var path = download.path
-            var re = /(?:\.([^.]+))?$/
-            var extension = re.exec(path)
-            if(extension.localeCompare(stl) === -1 || extension.localeCompare(zip)  === -1 || extension.localeCompare(obj) === -1){
-                download.cancel()
-            }else {
+            if( canBeImported(path)){
                 downloadView.visible = true
                 downloadView.append(download)
                 download.accept()
+            }else{
+                download.cancel()
             }
         }
 
         function onDownloadFinished(download) {
-            browser.toggleBrowser()
-            downloadView.visible = false
             var path = download.path
-            CuraApplication.importToCura(path)
+            if( canBeImported(path)){
+                browser.toggleBrowser()
+                downloadView.visible = false
+                CuraApplication.importToCura(path)
+            }
         }
 
         WebEngineProfile {
