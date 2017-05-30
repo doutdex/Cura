@@ -171,9 +171,16 @@ UM.MainWindow
         }
 
         function onDownloadRequested(download) {
-            downloadView.visible = true
-            downloadView.append(download)
-            download.accept()
+            var path = download.path
+            var re = /(?:\.([^.]+))?$/
+            var extension = re.exec(path)
+            if(extension.localeCompare(stl) === -1 || extension.localeCompare(zip)  === -1 || extension.localeCompare(obj) === -1){
+                download.cancel()
+            }else {
+                downloadView.visible = true
+                downloadView.append(download)
+                download.accept()
+            }
         }
 
         function onDownloadFinished(download) {
