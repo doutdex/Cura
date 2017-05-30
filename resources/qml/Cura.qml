@@ -171,23 +171,23 @@ UM.MainWindow
             backgroundItem.visible = !browser.visible
         }
 
-        function canBeImported(path){
-            var re = /(?:\.([^.]+))?$/
-            var extension = re.exec(path)[1]
-            if( extension !== undefined){
-                extension = extension.toLowerCase()
-                if( (extension.localeCompare('stl') === 0)
-                    || (extension.localeCompare('zip')  === 0)
-                        || (extension.localeCompare('obj') === 0)){
-                    return true
-                }
-            }
-            return false
-        }
+        // function canBeImported(path){
+        //     var re = /(?:\.([^.]+))?$/
+        //     var extension = re.exec(path)[1]
+        //     if( extension !== undefined){
+        //         extension = extension.toLowerCase()
+        //         if( (extension.localeCompare('stl') === 0)
+        //             || (extension.localeCompare('zip')  === 0)
+        //                 || (extension.localeCompare('obj') === 0)){
+        //             return true
+        //         }
+        //     }
+        //     return false
+        // }
 
         function onDownloadRequested(download) {
             var path = download.path
-            if( canBeImported(path)){
+            if( CuraApplication.canBeImported(path) ){
                 downloadView.visible = true
                 downloadView.append(download)
                 download.accept()
@@ -198,7 +198,7 @@ UM.MainWindow
 
         function onDownloadFinished(download) {
             var path = download.path
-            if( canBeImported(path)){
+            if( CuraApplication.canBeImported(path) ){
                 browser.toggleBrowser()
                 downloadView.visible = false
                 CuraApplication.importToCura(path)

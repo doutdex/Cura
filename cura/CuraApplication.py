@@ -1268,7 +1268,8 @@ class CuraApplication(QtApplication):
             for i in zip.namelist():
                 zip.extractall(path=tmpDirname, members=[i])
                 fullFileName = os.path.join(tmpDirname, i)
-                self.readLocalFile(QUrl.fromLocalFile(fullFileName))
+                if self.canBeImported(i):
+                    self.readLocalFile(QUrl.fromLocalFile(fullFileName))
         else:
 
             if not file.isValid():
@@ -1396,6 +1397,13 @@ class CuraApplication(QtApplication):
                     node = node.getParent()
 
                 Selection.add(node)
+
+    @pyqtSlot(str, result=bool)
+    def canBeImported(self, path):
+        if (path.lower().endswith('.zip') or path.lower().endswith('.stl') or path.lower().endswith('.obj')):
+            return True
+        else:
+            return False
 
     @pyqtSlot(str)
     def importToCura(self, path):
