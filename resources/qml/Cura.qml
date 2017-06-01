@@ -208,7 +208,7 @@ UM.MainWindow
         WebEngineProfile {
             id: defaultProfile
             storageName: "Default"
-            httpUserAgent: httpUserAgent+" Software:cura_mmf"
+            httpUserAgent: defaultProfile.httpUserAgent + " Software:cura_mmf"
         }
 
         WebEngineView {
@@ -533,7 +533,7 @@ UM.MainWindow
             {
                 id: openMMFButton;
                 text: catalog.i18nc("@action:button","Import object from MMF");
-                iconSource: UM.Theme.getIcon("mmf_icon")
+                iconSource: UM.Theme.getIcon("mmf_icon3")
                 style: UM.Theme.styles.tool_button
                 tooltip: '';
                 anchors
