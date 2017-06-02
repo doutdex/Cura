@@ -43,6 +43,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtWebEngine 1.2
 import QtQuick.Layouts 1.0
+import UM 1.3 as UM
 
 Rectangle {
     id: downloadView
@@ -101,7 +102,7 @@ Rectangle {
                 Button {
                     id: cancelButton
                     anchors.right: parent.right
-                    iconSource: "icons/process-stop.png"
+                    iconSource: UM.Theme.getIcon("process-stop")
                     onClicked: {
                         var download = downloadModel.downloads[index]
                         download.cancel()
