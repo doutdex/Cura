@@ -254,6 +254,7 @@
         "default_arrow": [0.8, 0.8],
         "starttLogo": [9.8, 5.0],
 
+
         "sidebar": [35.0, 10.0],
         "sidebar_header": [0.0, 4.0],
         "sidebar_header_highlight": [0.25, 0.25],
