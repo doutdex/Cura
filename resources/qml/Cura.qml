@@ -18,7 +18,7 @@ UM.MainWindow
 {
     id: base
     //: Cura application window title
-    title: catalog.i18nc("@title:window","Cura");
+    title: catalog.i18nc("@title:window", "Startt");
     viewportRect: Qt.rect(0, 0, (base.width - sidebar.width) / base.width, 1.0)
     property bool monitoringPrint: false
     Component.onCompleted:
@@ -577,8 +577,8 @@ UM.MainWindow
                 {
                     left: parent.left
                     bottom: parent.bottom
-                    // leftMargin: UM.Theme.getSize("default_margin").width;
-                    // bottomMargin: UM.Theme.getSize("default_margin").height;
+                    leftMargin: UM.Theme.getSize("default_margin").width;
+                    bottomMargin: UM.Theme.getSize("default_margin").height;
                 }
 
                 source: UM.Theme.getImage("starttLogo");
