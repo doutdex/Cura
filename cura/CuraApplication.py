@@ -1086,7 +1086,7 @@ class CuraApplication(QtApplication):
                 job.start()
             else:
                 Logger.log("w", "Unable to reload data because we don't have a filename.")
-    
+
     ##  Get logging data of the backend engine
     #   \returns \type{string} Logging data
     @pyqtSlot(result = str)
@@ -1400,10 +1400,10 @@ class CuraApplication(QtApplication):
 
     @pyqtSlot(str, result=bool)
     def canBeImported(self, path):
-        if (path.lower().endswith('.zip') or path.lower().endswith('.stl') or path.lower().endswith('.obj')):
-            return True
-        else:
+        if (path.lower().endswith('pdf')):
             return False
+        else:
+            return True
 
     @pyqtSlot(str)
     def importToCura(self, path):

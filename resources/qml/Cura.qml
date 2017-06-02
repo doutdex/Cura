@@ -160,7 +160,6 @@ UM.MainWindow
 
         function getHomeUrl() {
             return "http://startt.myminifactory.com"
-            // return "http://www.google.com"
         }
         function home() {
             browserView.url = browser.getHomeUrl()
@@ -208,7 +207,6 @@ UM.MainWindow
         WebEngineProfile {
             id: defaultProfile
             storageName: "Default"
-            httpUserAgent: defaultProfile.httpUserAgent + " Software:cura_mmf"
         }
 
         WebEngineView {
@@ -252,9 +250,9 @@ UM.MainWindow
 
         Component.onCompleted: {
             browserView.profile = defaultProfile
+            defaultProfile.httpUserAgent += ' Software:cura_mmf'
             defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
             defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
-
         }
 
     }
@@ -533,7 +531,7 @@ UM.MainWindow
             {
                 id: openMMFButton;
                 text: catalog.i18nc("@action:button","Import object from MMF");
-                iconSource: UM.Theme.getIcon("mmf_icon3")
+                iconSource: UM.Theme.getIcon("mmf_icon")
                 style: UM.Theme.styles.tool_button
                 tooltip: '';
                 anchors
