@@ -18,7 +18,7 @@ UM.MainWindow
 {
     id: base
     //: Cura application window title
-    title: catalog.i18nc("@title:window", "Startt");
+    title: catalog.i18nc("@title:window", "Cura for Startt");
     viewportRect: Qt.rect(0, 0, (base.width - sidebar.width) / base.width, 1.0)
     property bool monitoringPrint: false
     Component.onCompleted:

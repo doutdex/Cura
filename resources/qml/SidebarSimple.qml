@@ -508,7 +508,7 @@ Item
             anchors.rightMargin: UM.Theme.getSize("default_margin").width
             wrapMode: Text.WordWrap
             //: Tips label
-            text: catalog.i18nc("@label", "Need help improving your prints?<br>Read the <a href='%1'>Ultimaker Troubleshooting Guides</a>").arg("https://ultimaker.com/en/troubleshooting");
+            text: catalog.i18nc("@label", "<br><a href='%1'>Guide, Videos and operating software for Startt</a>").arg("http://startt.imakr.com");
             font: UM.Theme.getFont("default");
             color: UM.Theme.getColor("text");
             linkColor: UM.Theme.getColor("text_link")
