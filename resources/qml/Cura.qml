@@ -556,7 +556,7 @@ UM.MainWindow
             Button
             {
                 id: openMMFButton;
-                text: catalog.i18nc("@action:button","Import object from MMF");
+                text: catalog.i18nc("@action:button","Download guaranteed 3D printable objects from MyMiniFactory");
                 iconSource: UM.Theme.getIcon("mmf_icon")
                 style: UM.Theme.styles.tool_button
                 tooltip: '';
