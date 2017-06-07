@@ -40,7 +40,7 @@ UM.Dialog
     {
         id: version
 
-        text: "Cura %1".arg(UM.Application.version)
+        text: "1.0"
         font: UM.Theme.getFont("large")
         anchors.right : logo.right
         anchors.top: logo.bottom

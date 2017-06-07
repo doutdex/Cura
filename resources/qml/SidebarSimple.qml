@@ -508,7 +508,7 @@ Item
             anchors.rightMargin: UM.Theme.getSize("default_margin").width
             wrapMode: Text.WordWrap
             //: Tips label
-            text: catalog.i18nc("@label", "<br><a href='%1'>Guide, Videos and operating software for Startt</a>").arg("http://startt.imakr.com");
+            text: catalog.i18nc("@label", "<br><a href='%1'>Guide, videos and operating software for Startt</a>").arg("http://startt.imakr.com");
             font: UM.Theme.getFont("default");
             color: UM.Theme.getColor("text");
             linkColor: UM.Theme.getColor("text_link")

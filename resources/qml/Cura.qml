@@ -40,13 +40,7 @@ UM.MainWindow
     Rectangle {
         id: browser
         anchors.fill : parent
-        /*{
-            top: parent.top
-            bottom: parent.bottom
-            right: parent.right
-        }*/
         z: 2
-        // width: UM.Theme.getSize("sidebar").width
         height: 30
         visible: false
 
@@ -158,6 +152,18 @@ UM.MainWindow
             }
         }
 
+        Rectangle {
+            id: toolBarSeperator
+            height: 2
+            width: parent.width
+            color: 'black'
+            anchors
+            {
+                top: toolBar.bottom
+                right: parent.right
+            }
+        }
+
         function getHomeUrl() {
             return "http://startt.myminifactory.com"
         }
@@ -169,20 +175,6 @@ UM.MainWindow
             browser.visible = !browser.visible
             backgroundItem.visible = !browser.visible
         }
-
-        // function canBeImported(path){
-        //     var re = /(?:\.([^.]+))?$/
-        //     var extension = re.exec(path)[1]
-        //     if( extension !== undefined){
-        //         extension = extension.toLowerCase()
-        //         if( (extension.localeCompare('stl') === 0)
-        //             || (extension.localeCompare('zip')  === 0)
-        //                 || (extension.localeCompare('obj') === 0)){
-        //             return true
-        //         }
-        //     }
-        //     return false
-        // }
 
         function onDownloadRequested(download) {
             var path = download.path
@@ -214,7 +206,7 @@ UM.MainWindow
             anchors {
                 bottom: parent.bottom
                 right: parent.right
-                top: toolBar.bottom
+                top: toolBarSeperator.bottom
             }
             width: parent.width
             url: browser.getHomeUrl()
@@ -296,6 +288,12 @@ UM.MainWindow
                 MenuItem
                 {
                     action: Cura.Actions.open;
+                }
+
+                MenuItem
+                {
+                    text: catalog.i18nc("@action:inmenu menubar:file", "&Download from MyMiniFactory")
+                    onTriggered: browser.toggleBrowser()
                 }
 
                 RecentFilesMenu { }
