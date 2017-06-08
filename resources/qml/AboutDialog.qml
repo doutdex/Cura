@@ -12,7 +12,7 @@ UM.Dialog
     id: base
 
     //: About dialog title
-    title: catalog.i18nc("@title:window","About Cura")
+    title: catalog.i18nc("@title:window","About Cura for Startt")
 
     minimumWidth: 450 * Screen.devicePixelRatio
     minimumHeight: 550 * Screen.devicePixelRatio
