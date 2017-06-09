@@ -242,7 +242,7 @@ UM.MainWindow
 
         Component.onCompleted: {
             browserView.profile = defaultProfile
-            defaultProfile.httpUserAgent += ' Software:cura_mmf'
+            defaultProfile.httpUserAgent += ' Software:cura_for_Startt'
             defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
             defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
         }
