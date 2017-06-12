@@ -134,16 +134,17 @@ UM.MainWindow
                 Button {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    text: "Back to Cura"
                     style: ButtonStyle {
                         background: Rectangle {
                             radius: 0
                             height: parent.width
                         }
-                        label: Image {
+                        /*label: Image {
                             source: UM.Theme.getIcon("process-stop")
                             fillMode: Image.PreserveAspectFit
 
-                        }
+                        }*/
                     }
                     id: closeBrowserButton
                     onClicked: browser.toggleBrowser()
