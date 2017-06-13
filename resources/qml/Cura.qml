@@ -6,7 +6,6 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
-import QtWebEngine 1.2
 
 import UM 1.3 as UM
 import Cura 1.0 as Cura
@@ -37,218 +36,6 @@ UM.MainWindow
         Cura.Actions.parent = backgroundItem
     }
 
-    Rectangle {
-        id: browser
-        anchors.fill : parent
-        z: 2
-        height: 30
-        visible: false
-
-        Rectangle {
-            id: toolBar
-            height: 30
-            width: parent.width
-            color: 'white'
-            anchors
-            {
-                top: parent.top
-                right: parent.right
-            }
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-                Button {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    style: ButtonStyle {
-                        background: Rectangle {
-                            radius: 0
-                            height: parent.width
-                        }
-                        label: Image {
-                            source: UM.Theme.getIcon("go-previous")
-                            fillMode: Image.PreserveAspectFit
-
-                        }
-                    }
-                    id: backButton
-                    onClicked: browserView.goBack()
-                    enabled: browserView && browserView.canGoBack
-                    activeFocusOnTab: !browserView.platformIsMac
-                }
-                Button {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    style: ButtonStyle {
-                        background: Rectangle {
-                            radius: 0
-                            height: parent.width
-                        }
-                        label: Image {
-                            source: UM.Theme.getIcon("go-next")
-                            fillMode: Image.PreserveAspectFit
-
-                        }
-                    }
-                    id: forwardButton
-                    onClicked: browserView.goForward()
-                    enabled: browserView && browserView.canGoForward
-                    activeFocusOnTab: !browserView.platformIsMac
-                }
-                Button {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    style: ButtonStyle {
-                        background: Rectangle {
-                            radius: 0
-                            height: parent.width
-                        }
-                        label: Image {
-                            source: UM.Theme.getIcon("view-refresh")
-                            fillMode: Image.PreserveAspectFit
-
-                        }
-                    }
-                    id: reloadButton
-                    onClicked: browserView && browserView.reload()
-                    activeFocusOnTab: !browserView.platformIsMac
-                }
-                Button {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    style: ButtonStyle {
-                        background: Rectangle {
-                            radius: 0
-                            height: parent.width
-                        }
-                        label: Image {
-                            source: UM.Theme.getIcon("home")
-                            fillMode: Image.PreserveAspectFit
-
-                        }
-                    }
-                    id: homeButton
-                    onClicked: browser.home()
-                    activeFocusOnTab: !browserView.platformIsMac
-                }
-                Button {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    text: "Back to Cura"
-                    style: ButtonStyle {
-                        background: Rectangle {
-                            radius: 0
-                            height: parent.width
-                        }
-                        /*label: Image {
-                            source: UM.Theme.getIcon("process-stop")
-                            fillMode: Image.PreserveAspectFit
-
-                        }*/
-                    }
-                    id: closeBrowserButton
-                    onClicked: browser.toggleBrowser()
-                    activeFocusOnTab: !browserView.platformIsMac
-                }
-            }
-        }
-
-        Rectangle {
-            id: toolBarSeperator
-            height: 2
-            width: parent.width
-            color: 'black'
-            anchors
-            {
-                top: toolBar.bottom
-                right: parent.right
-            }
-        }
-
-        function getHomeUrl() {
-            return "http://startt.myminifactory.com"
-        }
-        function home() {
-            browserView.url = browser.getHomeUrl()
-        }
-
-        function toggleBrowser() {
-            browser.visible = !browser.visible
-            backgroundItem.visible = !browser.visible
-        }
-
-        function onDownloadRequested(download) {
-            var path = download.path
-            if( CuraApplication.canBeImported(path) ){
-                downloadView.visible = true
-                downloadView.append(download)
-                download.accept()
-            }else{
-                download.cancel()
-            }
-        }
-
-        function onDownloadFinished(download) {
-            var path = download.path
-            if( CuraApplication.canBeImported(path) ){
-                browser.toggleBrowser()
-                downloadView.visible = false
-                CuraApplication.importToCura(path)
-            }
-        }
-
-        WebEngineProfile {
-            id: defaultProfile
-            storageName: "Default"
-        }
-
-        WebEngineView {
-            id: browserView
-            anchors {
-                bottom: parent.bottom
-                right: parent.right
-                top: toolBarSeperator.bottom
-            }
-            width: parent.width
-            url: browser.getHomeUrl()
-            onNewViewRequested: {
-                if (!request.userInitiated) {
-                    CuraApplication.log("Warning: Blocked a popup window.")
-                } else {
-                    request.openIn(browserView)
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (mouseButtonClicked === Qt.RightButton) {
-                        // disable right click
-                        return false
-                    }
-                }
-            }
-        }
-
-        DownloadView {
-            id: downloadView
-            visible: false
-            anchors {
-                bottom: parent.bottom
-                right: parent.right
-                top: toolBar.bottom
-            }
-            width: parent.width
-        }
-
-        Component.onCompleted: {
-            browserView.profile = defaultProfile
-            defaultProfile.httpUserAgent += ' Software:cura_for_Startt'
-            defaultProfile.downloadRequested.connect(browser.onDownloadRequested)
-            defaultProfile.downloadFinished.connect(browser.onDownloadFinished)
-        }
-
-    }
 
     Item
     {
@@ -547,26 +334,9 @@ UM.MainWindow
                 anchors
                 {
                     top: parent.top;
-                }
-                action: Cura.Actions.open;
-            }
-
-
-            Button
-            {
-                id: openMMFButton;
-                text: catalog.i18nc("@action:button","Download guaranteed 3D printable objects from MyMiniFactory");
-                iconSource: UM.Theme.getIcon("mmf_icon")
-                style: UM.Theme.styles.tool_button
-                tooltip: '';
-                anchors
-                {
-                    top: openFileButton.bottom;
                     left: parent.left;
                 }
-                onClicked: {
-                    browser.toggleBrowser()
-                }
+                action: Cura.Actions.open;
             }
 
             Image
@@ -575,8 +345,8 @@ UM.MainWindow
                 anchors
                 {
                     left: parent.left
-                    bottom: parent.bottom
                     leftMargin: UM.Theme.getSize("default_margin").width;
+                    bottom: parent.bottom
                     bottomMargin: UM.Theme.getSize("default_margin").height;
                 }
 
@@ -600,11 +370,12 @@ UM.MainWindow
                 property int mouseY: base.mouseY
 
                 anchors {
-                    top: openMMFButton.bottom;
+                    top: openFileButton.bottom;
                     topMargin: UM.Theme.getSize("window_margin").height;
                     left: parent.left;
                 }
             }
+
 
             Sidebar
             {

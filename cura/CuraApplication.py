@@ -7,7 +7,6 @@ from PyQt5.QtNetwork import QLocalSocket
 from PyQt5.QtCore import QUrl, QObject, pyqtProperty, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlEngine, QQmlComponent
-from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import Qt
 
 from UM.Qt.QtApplication import QtApplication
@@ -1402,14 +1401,3 @@ class CuraApplication(QtApplication):
                     node = node.getParent()
 
                 Selection.add(node)
-
-    @pyqtSlot(str, result=bool)
-    def canBeImported(self, path):
-        if (path.lower().endswith('pdf')):
-            return False
-        else:
-            return True
-
-    @pyqtSlot(str)
-    def importToCura(self, path):
-        self.readLocalFile(QUrl.fromLocalFile(path))
