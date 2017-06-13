@@ -341,7 +341,7 @@ UM.MainWindow
 
                 MenuSeparator { }
 
-                MenuItem { action: Cura.Actions.quit; }
+                // MenuItem { action: Cura.Actions.quit; }
             }
 
             Menu
