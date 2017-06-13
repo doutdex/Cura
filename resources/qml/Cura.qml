@@ -581,13 +581,13 @@ UM.MainWindow
                 }
 
                 source: UM.Theme.getImage("starttLogo");
-                width: UM.Theme.getSize("starttLogo").width;
-                height: UM.Theme.getSize("starttLogo").height;
+                width: sourceSize.width
+                height: sourceSize.height
 
                 z: -1;
 
-                sourceSize.width: width;
-                sourceSize.height: height;
+                // sourceSize.width: width;
+                // sourceSize.height: height;
             }
 
 

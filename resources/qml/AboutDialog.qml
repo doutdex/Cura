@@ -30,7 +30,7 @@ UM.Dialog
         // sourceSize.width: width
         // sourceSize.height: height
         anchors.top: parent.top
-        anchors.topMargin: (base.minimumWidth - width) / 2
+        // anchors.topMargin: (base.minimumWidth - width) / 2
         anchors.horizontalCenter: parent.horizontalCenter
 
         UM.I18nCatalog{id: catalog; name:"cura"}
