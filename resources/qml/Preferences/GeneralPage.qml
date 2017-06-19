@@ -152,7 +152,8 @@ UM.PreferencesPage
                             append({ text: "Suomi", code: "fi" })
                             append({ text: "Français", code: "fr" })
                             append({ text: "Italiano", code: "it" })
-                            append({ text: "日本語", code: "jp" })
+                            //append({ text: "日本語", code: "jp" })
+                            //append({ text: "한국어", code: "ko" })
                             append({ text: "Nederlands", code: "nl" })
                             append({ text: "Português do Brasil", code: "ptbr" })
                             append({ text: "Русский", code: "ru" })
@@ -218,7 +219,11 @@ UM.PreferencesPage
                         id: themeList
 
                         Component.onCompleted: {
-                            append({ text: catalog.i18nc("@item:inlistbox", "Ultimaker"), code: "cura" })
+                            var themes = UM.Theme.getThemes()
+                            for (var i = 0; i < themes.length; i++)
+                            {
+                                append({ text: themes[i].name.toString(), code: themes[i].id.toString() });
+                            }
                         }
                     }
 
@@ -331,7 +336,6 @@ UM.PreferencesPage
                     text: catalog.i18nc("@action:button","Center camera when item is selected");
                     checked: boolCheck(UM.Preferences.getValue("view/center_on_select"))
                     onClicked: UM.Preferences.setValue("view/center_on_select",  checked)
-                    enabled: Qt.platform.os != "windows" // Hack: disable the feature on windows as it's broken for pyqt 5.7.1.
                 }
             }
 
