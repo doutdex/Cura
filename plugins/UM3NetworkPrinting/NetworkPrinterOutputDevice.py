@@ -188,8 +188,17 @@ class NetworkPrinterOutputDevice(PrinterOutputDevice):
         else:
             self._updatePrinterType("unknown")
 
+        Application.getInstance().getOutputDeviceManager().outputDevicesChanged.connect(self._onOutputDevicesChanged)
+
     def _onNetworkAccesibleChanged(self, accessible):
         Logger.log("d", "Network accessible state changed to: %s", accessible)
+
+    ##  Triggered when the output device manager changes devices.
+    #
+    #   This is how we can detect that our device is no longer active now.
+    def _onOutputDevicesChanged(self):
+        if self.getId() not in Application.getInstance().getOutputDeviceManager().getOutputDeviceIds():
+            self.stopCamera()
 
     def _onAuthenticationTimer(self):
         self._authentication_counter += 1
@@ -616,7 +625,7 @@ class NetworkPrinterOutputDevice(PrinterOutputDevice):
     #   is ignored.
     #   \param kwargs Keyword arguments.
     def requestWrite(self, nodes, file_name = None, filter_by_machine = False, file_handler = None, **kwargs):
-        if self._printer_state != "idle":
+        if self._printer_state not in ["idle", ""]:
             self._error_message = Message(
                 i18n_catalog.i18nc("@info:status", "Unable to start a new print job, printer is busy. Current printer status is %s.") % self._printer_state)
             self._error_message.show()

@@ -677,7 +677,7 @@
                                     "minimum_value_warning": "(0.1 + 0.4 * machine_nozzle_size) if outer_inset_first else 0.1 * machine_nozzle_size",
                                     "maximum_value_warning": "2 * machine_nozzle_size",
                                     "default_value": 0.4,
-                                    "value": "wall_line_width",
+                                    "value": "extruderValue(wall_0_extruder_nr, 'wall_line_width')",
                                     "type": "float",
                                     "limit_to_extruder": "wall_0_extruder_nr",
                                     "settable_per_mesh": true
@@ -916,7 +916,7 @@
                     "default_value": 0.2,
                     "value": "machine_nozzle_size / 2",
                     "minimum_value": "0",
-                    "maximum_value_warning": "machine_nozzle_size",
+                    "maximum_value_warning": "machine_nozzle_size * 2",
                     "limit_to_extruder": "wall_0_extruder_nr",
                     "settable_per_mesh": true
                 },
@@ -1136,6 +1136,19 @@
                     "limit_to_extruder": "wall_0_extruder_nr",
                     "settable_per_mesh": true
                 },
+                "xy_offset_layer_0":
+                {
+                    "label": "Initial Layer Horizontal Expansion",
+                    "description": "Amount of offset applied to all polygons in the first layer. A negative value can compensate for squishing of the first layer known as \"elephant's foot\".",
+                    "unit": "mm",
+                    "type": "float",
+                    "minimum_value_warning": "-1",
+                    "maximum_value_warning": "1",
+                    "default_value": 0,
+                    "value": "xy_offset",
+                    "limit_to_extruder": "wall_0_extruder_nr",
+                    "settable_per_mesh": true
+                },
                 "z_seam_type":
                 {
                     "label": "Z Seam Alignment",
@@ -1171,6 +1184,17 @@
                     "type": "float",
                     "default_value": 100.0,
                     "value": "machine_depth * 3",
+                    "enabled": "z_seam_type == 'back'",
+                    "limit_to_extruder": "wall_0_extruder_nr",
+                    "settable_per_mesh": true
+                },
+                "z_seam_relative":
+                {
+                    "label": "Z Seam Relative",
+                    "description": "When enabled, the z seam coordinates are relative to each part's centre. When disabled, the coordinates define an absolute position on the build plate.",
+                    "unit": "mm",
+                    "type": "bool",
+                    "default_value": false,
                     "enabled": "z_seam_type == 'back'",
                     "limit_to_extruder": "wall_0_extruder_nr",
                     "settable_per_mesh": true
@@ -1393,7 +1417,6 @@
                     "default_value": 1.5,
                     "minimum_value": "0.0001",
                     "minimum_value_warning": "3 * resolveOrValue('layer_height')",
-                    "maximum_value_warning": "100",
                     "enabled": "infill_sparse_density > 0 and gradual_infill_steps > 0 and infill_pattern != 'cubicsubdiv'",
                     "limit_to_extruder": "infill_extruder_nr",
                     "settable_per_mesh": true
@@ -1445,6 +1468,7 @@
                             "type": "bool",
                             "default_value": false,
                             "limit_to_extruder": "top_bottom_extruder_nr",
+                            "value": "expand_skins_into_infill",
                             "settable_per_mesh": true
                         }
                     }
@@ -1524,6 +1548,7 @@
                     "maximum_value_warning": "285",
                     "enabled": "machine_nozzle_temp_enabled",
                     "settable_per_extruder": true,
+                    "settable_per_mesh": false,
                     "minimum_value": "-273.15"
                 },
                 "material_print_temperature":
@@ -2189,9 +2214,9 @@
                     "description": "The first few layers are printed slower than the rest of the model, to get better adhesion to the build plate and improve the overall success rate of prints. The speed is gradually increased over these layers.",
                     "type": "int",
                     "default_value": 2,
-                    "resolve": "sum(extruderValues('speed_slowdown_layers')) / len(extruderValues('speed_slowdown_layers'))",
+                    "resolve": "round(sum(extruderValues('speed_slowdown_layers')) / len(extruderValues('speed_slowdown_layers')))",
                     "minimum_value": "0",
-                    "maximum_value_warning": "1.0 / resolveOrValue('layer_height')",
+                    "maximum_value_warning": "3.2 / resolveOrValue('layer_height')",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
@@ -2908,7 +2933,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 1,
-                    "minimum_value_warning": "0.75 * machine_nozzle_size",
+                    "minimum_value_warning": "0",
                     "maximum_value_warning": "10",
                     "enabled": "retraction_enable and retraction_hop_enabled",
                     "settable_per_mesh": false,
@@ -4357,7 +4382,7 @@
                             "unit": "mm",
                             "type": "float",
                             "default_value": 2,
-                            "value": "round(max(2 * max(extruderValues('prime_tower_line_width')), 0.5 * (resolveOrValue('prime_tower_size') - math.sqrt(max(0, resolveOrValue('prime_tower_size') ** 2 - max(extruderValues('prime_tower_min_volume')) / resolveOrValue('layer_height'))))), 3)",
+                            "value": "round(max(2 * prime_tower_line_width, 0.5 * (prime_tower_size - math.sqrt(max(0, prime_tower_size ** 2 - prime_tower_min_volume / layer_height)))), 3)",
                             "resolve": "max(extruderValues('prime_tower_wall_thickness'))",
                             "minimum_value": "0.001",
                             "minimum_value_warning": "2 * min(extruderValues('prime_tower_line_width')) - 0.0001",
@@ -4376,8 +4401,6 @@
                     "unit": "mm",
                     "enabled": "resolveOrValue('prime_tower_enable')",
                     "default_value": 200,
-                    "minimum_value_warning": "-1000",
-                    "maximum_value_warning": "1000",
                     "maximum_value": "machine_width / 2 if machine_center_is_zero else machine_width",
                     "minimum_value": "resolveOrValue('prime_tower_size') - machine_width / 2 if machine_center_is_zero else resolveOrValue('prime_tower_size')",
                     "settable_per_mesh": false,
@@ -4391,8 +4414,6 @@
                     "unit": "mm",
                     "enabled": "resolveOrValue('prime_tower_enable')",
                     "default_value": 200,
-                    "minimum_value_warning": "-1000",
-                    "maximum_value_warning": "1000",
                     "maximum_value": "machine_depth / 2 - resolveOrValue('prime_tower_size') if machine_center_is_zero else machine_depth - resolveOrValue('prime_tower_size')",
                     "minimum_value": "machine_depth / -2 if machine_center_is_zero else 0",
                     "settable_per_mesh": false,
@@ -4430,6 +4451,19 @@
                     "type": "bool",
                     "enabled": "resolveOrValue('prime_tower_enable')",
                     "default_value": true,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "prime_tower_purge_volume":
+                {
+                    "label": "Prime Tower Purge Volume",
+                    "description": "Amount of filament to be purged when wiping on the prime tower. Purging is useful for compensating the filament lost by oozing during inactivity of the nozzle.",
+                    "type": "float",
+                    "enabled": "resolveOrValue('prime_tower_enable') and dual_pre_wipe",
+                    "unit": "mm³",
+                    "default_value": 0,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "0.5",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },

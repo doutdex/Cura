@@ -8,7 +8,7 @@ from UM.PluginRegistry import PluginRegistry
 from UM.Application import Application
 from UM.Version import Version
 
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from PyQt5.QtCore import QUrl, QObject, Qt, pyqtProperty, pyqtSignal, pyqtSlot
 from PyQt5.QtQml import QQmlComponent, QQmlContext
 
@@ -39,8 +39,24 @@ class PluginBrowser(QObject, Extension):
         self._qml_component = None
         self._qml_context = None
         self._dialog = None
+        self._download_progress = 0
+
+        self._is_downloading = False
+
+        self._request_header = [b"User-Agent", str.encode("%s - %s" % (Application.getInstance().getApplicationName(), Application.getInstance().getVersion()))]
+
+        # Installed plugins are really installed after reboot. In order to prevent the user from downloading the
+        # same file over and over again, we keep track of the upgraded plugins.
+        self._newly_installed_plugin_ids = []
+
 
     pluginsMetadataChanged = pyqtSignal()
+    onDownloadProgressChanged = pyqtSignal()
+    onIsDownloadingChanged = pyqtSignal()
+
+    @pyqtProperty(bool, notify = onIsDownloadingChanged)
+    def isDownloading(self):
+        return self._is_downloading
 
     def browsePlugins(self):
         self._createNetworkManager()
@@ -50,9 +66,12 @@ class PluginBrowser(QObject, Extension):
             self._createDialog()
         self._dialog.show()
 
+    @pyqtSlot()
     def requestPluginList(self):
+        Logger.log("i", "Requesting plugin list")
         url = QUrl(self._api_url + "plugins")
         self._plugin_list_request = QNetworkRequest(url)
+        self._plugin_list_request.setRawHeader(*self._request_header)
         self._network_manager.get(self._plugin_list_request)
 
     def _createDialog(self):
@@ -69,23 +88,48 @@ class PluginBrowser(QObject, Extension):
             Logger.log("e", "QQmlComponent status %s", self._qml_component.status())
             Logger.log("e", "QQmlComponent errorString %s", self._qml_component.errorString())
 
+    def setIsDownloading(self, is_downloading):
+        if self._is_downloading != is_downloading:
+            self._is_downloading = is_downloading
+            self.onIsDownloadingChanged.emit()
+
     def _onDownloadPluginProgress(self, bytes_sent, bytes_total):
         if bytes_total > 0:
             new_progress = bytes_sent / bytes_total * 100
-
+            self.setDownloadProgress(new_progress)
             if new_progress == 100.0:
+                self.setIsDownloading(False)
                 self._download_plugin_reply.downloadProgress.disconnect(self._onDownloadPluginProgress)
                 self._temp_plugin_file = tempfile.NamedTemporaryFile(suffix = ".curaplugin")
                 self._temp_plugin_file.write(self._download_plugin_reply.readAll())
+
                 result = PluginRegistry.getInstance().installPlugin("file://" + self._temp_plugin_file.name)
+
+                self._newly_installed_plugin_ids.append(result["id"])
+                self.pluginsMetadataChanged.emit()
+
+                Application.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Plugin browser"), result["message"])
+
                 self._temp_plugin_file.close()  # Plugin was installed, delete temp file
+
+    @pyqtProperty(int, notify = onDownloadProgressChanged)
+    def downloadProgress(self):
+        return self._download_progress
+
+    def setDownloadProgress(self, progress):
+        if progress != self._download_progress:
+            self._download_progress = progress
+            self.onDownloadProgressChanged.emit()
 
     @pyqtSlot(str)
     def downloadAndInstallPlugin(self, url):
         Logger.log("i", "Attempting to download & install plugin from %s", url)
         url = QUrl(url)
         self._download_plugin_request = QNetworkRequest(url)
+        self._download_plugin_request.setRawHeader(*self._request_header)
         self._download_plugin_reply = self._network_manager.get(self._download_plugin_request)
+        self.setDownloadProgress(0)
+        self.setIsDownloading(True)
         self._download_plugin_reply.downloadProgress.connect(self._onDownloadPluginProgress)
 
     @pyqtProperty(QObject, notify=pluginsMetadataChanged)
@@ -98,6 +142,7 @@ class PluginBrowser(QObject, Extension):
             self._plugins_model.addRoleName(Qt.UserRole + 4, "author")
             self._plugins_model.addRoleName(Qt.UserRole + 5, "already_installed")
             self._plugins_model.addRoleName(Qt.UserRole + 6, "file_location")
+            self._plugins_model.addRoleName(Qt.UserRole + 7, "can_upgrade")
         else:
             self._plugins_model.clear()
         items = []
@@ -107,25 +152,51 @@ class PluginBrowser(QObject, Extension):
                 "version": metadata["version"],
                 "short_description": metadata["short_description"],
                 "author": metadata["author"],
-                "already_installed": self._checkAlreadyInstalled(metadata["id"], metadata["version"]),
-                "file_location": metadata["file_location"]
+                "already_installed": self._checkAlreadyInstalled(metadata["id"]),
+                "file_location": metadata["file_location"],
+                "can_upgrade": self._checkCanUpgrade(metadata["id"], metadata["version"])
             })
         self._plugins_model.setItems(items)
         return self._plugins_model
 
-    def _checkAlreadyInstalled(self, id, version):
+    def _checkCanUpgrade(self, id, version):
         plugin_registry = PluginRegistry.getInstance()
         metadata = plugin_registry.getMetaData(id)
         if metadata != {}:
+            if id in self._newly_installed_plugin_ids:
+                return False  # We already updated this plugin.
             current_version = Version(metadata["plugin"]["version"])
             new_version = Version(version)
             if new_version > current_version:
-                return False
-        return True
+                return True
+        return False
 
+    def _checkAlreadyInstalled(self, id):
+        plugin_registry = PluginRegistry.getInstance()
+        metadata = plugin_registry.getMetaData(id)
+        if metadata != {}:
+            return True
+        else:
+            if id in self._newly_installed_plugin_ids:
+                return True  # We already installed this plugin, but the registry just doesn't know it yet.
+            return False
 
     def _onRequestFinished(self, reply):
         reply_url = reply.url().toString()
+        if reply.error() == QNetworkReply.TimeoutError:
+            Logger.log("w", "Got a timeout.")
+            # Reset everything.
+            self.setDownloadProgress(0)
+            self.setIsDownloading(False)
+            if self._download_plugin_reply:
+                self._download_plugin_reply.downloadProgress.disconnect(self._onDownloadPluginProgress)
+                self._download_plugin_reply.abort()
+                self._download_plugin_reply = None
+            return
+        elif reply.error() == QNetworkReply.HostNotFoundError:
+            Logger.log("w", "Unable to reach server.")
+            return
+
         if reply.operation() == QNetworkAccessManager.GetOperation:
             if reply_url == self._api_url + "plugins":
                 try:
@@ -139,9 +210,20 @@ class PluginBrowser(QObject, Extension):
             # Ignore any operation that is not a get operation
             pass
 
+    def _onNetworkAccesibleChanged(self, accessible):
+        if accessible == 0:
+            self.setDownloadProgress(0)
+            self.setIsDownloading(False)
+            if self._download_plugin_reply:
+                self._download_plugin_reply.downloadProgress.disconnect(self._onDownloadPluginProgress)
+                self._download_plugin_reply.abort()
+                self._download_plugin_reply = None
+
     def _createNetworkManager(self):
         if self._network_manager:
             self._network_manager.finished.disconnect(self._onRequestFinished)
+            self._network_manager.networkAccessibleChanged.disconnect(self._onNetworkAccesibleChanged)
 
         self._network_manager = QNetworkAccessManager()
         self._network_manager.finished.connect(self._onRequestFinished)
+        self._network_manager.networkAccessibleChanged.connect(self._onNetworkAccesibleChanged)
