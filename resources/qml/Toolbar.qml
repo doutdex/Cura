@@ -107,8 +107,6 @@ Item
         Behavior on opacity { NumberAnimation { duration: 100 } }
 
         color: UM.Theme.getColor("tool_panel_background")
-        borderColor: UM.Theme.getColor("lining")
-        borderWidth: UM.Theme.getSize("default_lining").width
 
         MouseArea //Catch all mouse events (so scene doesnt handle them)
         {
