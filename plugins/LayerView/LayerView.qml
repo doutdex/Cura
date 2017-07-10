@@ -39,8 +39,6 @@ Item
         height: parent.height
         z: slider.z - 1
         color: UM.Theme.getColor("tool_panel_background")
-        borderWidth: UM.Theme.getSize("default_lining").width
-        borderColor: UM.Theme.getColor("lining")
 
         target: parent.buttonTarget
         arrowSize: UM.Theme.getSize("default_arrow").width
@@ -189,8 +187,6 @@ Item
                         width: UM.Theme.getSize("layerview_legend_size").width
                         height: UM.Theme.getSize("layerview_legend_size").height
                         color: model.color
-                        border.width: UM.Theme.getSize("default_lining").width
-                        border.color: UM.Theme.getColor("lining")
                         visible: !view_settings.show_legend
                     }
                     Layout.fillWidth: true
@@ -244,8 +240,6 @@ Item
                         width: UM.Theme.getSize("layerview_legend_size").width
                         height: UM.Theme.getSize("layerview_legend_size").height
                         color: UM.Theme.getColor(model.colorId)
-                        border.width: UM.Theme.getSize("default_lining").width
-                        border.color: UM.Theme.getColor("lining")
                         visible: view_settings.show_legend
                     }
                     Layout.fillWidth: true
@@ -299,8 +293,6 @@ Item
                         width: UM.Theme.getSize("layerview_legend_size").width
                         height: UM.Theme.getSize("layerview_legend_size").height
                         color: UM.Theme.getColor(model.colorId)
-                        border.width: UM.Theme.getSize("default_lining").width
-                        border.color: UM.Theme.getColor("lining")
                         visible: view_settings.show_legend
                     }
                     Layout.fillWidth: true
@@ -394,8 +386,6 @@ Item
                 radius: parent.trackRadius
                 anchors.centerIn: parent
                 color: parent.trackColor
-                border.width: parent.trackBorderWidth;
-                border.color: parent.trackBorderColor;
             }
 
             Item {
@@ -537,8 +527,6 @@ Item
                 Behavior on height { NumberAnimation { duration: 50; } }
 
                 color: UM.Theme.getColor("tool_panel_background")
-                borderColor: UM.Theme.getColor("lining")
-                borderWidth: UM.Theme.getSize("default_lining").width
 
                 visible: slider.layersVisible
 
