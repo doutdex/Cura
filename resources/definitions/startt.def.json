@@ -10,7 +10,7 @@
         "category": "Startt",
         "file_formats": "text/x-gcode",
         "platform_offset": [ 0, -27, -6],
-        "has_materials": false,
+        "has_materials": true,
         "platform": "startt_textured_platform.obj",
         "platform_texture": "startt_platform.png"
     },
